@@ -20,9 +20,7 @@
 /doc/manual.pdf
 
 /doc/JupyterKernel.xml
-/doc/_AutoDocMainFile.xml
-/doc/_Chapter_Jupyter_Renderables.xml
-/doc/_Chapter_Jupyter_Utility_Functions.xml
+/doc/_*
 /doc/title.xml
 
 .deps/
