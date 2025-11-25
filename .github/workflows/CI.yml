@@ -34,7 +34,7 @@ jobs:
           - stable-4.10
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: 'Install initial dependencies'
         run: |
           sudo apt-get install libzmq3-dev
