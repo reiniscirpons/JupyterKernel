@@ -1,21 +1,34 @@
-FROM gapsystem/gap-docker
+## {{{
+ARG GAP_VERSION="4.14.0"
+ARG DOCKER_BASE_IMAGE_URL="ghcr.io/gap-system/gap:${GAP_VERSION}-full"
+## }}}
+
+FROM ${DOCKER_BASE_IMAGE_URL} AS base
 
 MAINTAINER Olexandr Konovalov <obk1@st-andrews.ac.uk>
 
-# Update version number each time after gap-docker container is updated
-ENV GAP_VERSION 4.11.1
+ARG GAP_VERSION
 
-# Remove previous JupyterKernel installation, copy this repository and make new install
+USER root
 
-RUN cd /home/gap/inst/gap-${GAP_VERSION}/pkg/ \
-    && rm -rf JupyterKernel \
-    && wget https://github.com/gap-packages/JupyterKernel/archive/master.zip \
-    && unzip -q master.zip \
-    && rm master.zip \
-    && mv JupyterKernel-master JupyterKernel \
-    && cd JupyterKernel \
-    && pip3 install . --user
+RUN apt-get clean        && \
+    apt-get update --yes && \
+    apt-get install --no-install-recommends --quiet --yes python3 python3-pip
+
+# TODO(reiniscirpons): Another hack
+ENV PATH="/opt/gap/.local/bin:${PATH}"
 
 USER gap
 
-WORKDIR /home/gap/inst/gap-${GAP_VERSION}/pkg/JupyterKernel/demos
+RUN python3 -m pip install --no-cache-dir notebook jupyterlab
+
+# Remove previous JupyterKernel installation, copy this repository and make new install
+RUN cd ${HOME}/gap-${GAP_VERSION}/pkg/ \
+    && rm -rf JupyterKernel \
+    && git clone https://github.com/reiniscirpons/JupyterKernel \
+    && cd JupyterKernel \
+    && python3 -m pip install . --user
+
+WORKDIR ${HOME}/gap-${GAP_VERSION}/pkg/JupyterKernel/demos
+
+ENTRYPOINT []
